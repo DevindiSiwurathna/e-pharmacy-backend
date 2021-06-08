@@ -51,6 +51,27 @@ namespace E_Pharmacy.Controllers
                      .ToListAsync();
             }
 
+            else if (field == "Byid")
+            {
+                var intid = Convert.ToInt32(value);
+                return await _context.Pharmacy.Where(p => p.Id == intid)
+                     .Select(x => new Pharmacy()
+                     {
+                         Id = x.Id,
+                         RegNo = x.RegNo,
+                         Pharmacyname = x.Pharmacyname,
+                         Address = x.Address,
+                         District = x.District,
+                         Email = x.Email,
+                         TeleNo = x.TeleNo,
+                         Password = x.Password,
+                         Pharmacyimagename = x.Pharmacyimagename,
+                         ImageSrc = String.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, x.Pharmacyimagename)
+                     })
+                     .ToListAsync();
+
+            }
+
             else if (field == "all")
             {
                 return await _context.Pharmacy.ToListAsync();
@@ -78,11 +99,17 @@ namespace E_Pharmacy.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPharmacy(int id, Pharmacy pharmacy)
+        public async Task<IActionResult> PutPharmacy(int id, [FromForm]Pharmacy pharmacy)
         {
             if (id != pharmacy.Id)
             {
                 return BadRequest();
+            }
+
+            if (pharmacy.Pharmacyimagefile != null)
+            {
+                DeleteImage(pharmacy.Pharmacyimagename);
+                pharmacy.Pharmacyimagename = await SaveImage(pharmacy.Pharmacyimagefile);
             }
 
             _context.Entry(pharmacy).State = EntityState.Modified;
@@ -143,6 +170,7 @@ namespace E_Pharmacy.Controllers
                 return NotFound();
             }
 
+            DeleteImage(pharmacy.Pharmacyimagename);
             _context.Pharmacy.Remove(pharmacy);
             await _context.SaveChangesAsync();
 
@@ -178,6 +206,14 @@ namespace E_Pharmacy.Controllers
                 await Pharmacyimagefile.CopyToAsync(fileStream);
             }
             return Pharmacyimagename;
+        }
+
+        [NonAction]
+        public void DeleteImage(string Pharmacyimagename)
+        {
+            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", Pharmacyimagename);
+            if (System.IO.File.Exists(imagePath))
+                System.IO.File.Delete(imagePath);
         }
 
     }

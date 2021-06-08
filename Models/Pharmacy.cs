@@ -30,5 +30,8 @@ namespace E_Pharmacy.Models
 
         public string UserRole = "Pharmacy";
         internal int pharmacyId;
+
+        //Pascal(EmployeeName) -> Camel EmployeeID ->employeeID
+        //Camel(employeeName) -> Pascal
     }
 }
