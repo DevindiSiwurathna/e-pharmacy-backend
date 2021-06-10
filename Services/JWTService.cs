@@ -37,6 +37,11 @@ namespace E_Pharmacy.Services
             var currentUserRole = new object();
             var currentUserId = new object();
             var currentUserName = new object();
+            var currentUserMail = new object();
+            var currentUserTele = new object();
+            
+
+
 
 
             if (isCustomer != null)
@@ -44,6 +49,9 @@ namespace E_Pharmacy.Services
                 currentUserRole = isCustomer.UserRole;
                 currentUserId = isCustomer.CustId;
                 currentUserName = isCustomer.Customername;
+                currentUserMail = isCustomer.Email;
+                currentUserTele = isCustomer.TeleNo;
+                
             }
 
 
@@ -52,6 +60,8 @@ namespace E_Pharmacy.Services
                 currentUserRole = isPharmacy.UserRole;
                 currentUserId = isPharmacy.Id;
                 currentUserName = isPharmacy.Pharmacyname;
+                currentUserMail = isPharmacy.Email;
+                currentUserTele = isPharmacy.TeleNo;
             }
 
             var claims = new[]
@@ -60,6 +70,8 @@ namespace E_Pharmacy.Services
                 new Claim("id", currentUserId.ToString()),
                 new Claim("role", currentUserRole.ToString()),
                 new Claim("name", currentUserName.ToString()),
+                new Claim("mail", currentUserMail.ToString()),
+                new Claim("tele", currentUserTele.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 
